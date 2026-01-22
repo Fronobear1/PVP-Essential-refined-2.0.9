@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"package": "com.fronobear.pvpessentials.refined.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+	],
+	"client": [
+		"CrosshairMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
