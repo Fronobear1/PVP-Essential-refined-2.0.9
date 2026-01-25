@@ -13,8 +13,6 @@ public class PvPEssentialsRefinedClient implements ClientModInitializer {
 
         HudRenderCallback.EVENT.register((drawContext, tickCounter) -> {
             if (!ConfigManager.getConfig().general.modEnabled) return;
-
-            // ArmorHud removed (using integrated mod)
             CombatItemsHud.render(drawContext, tickCounter);
         });
     }

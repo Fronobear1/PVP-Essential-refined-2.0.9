@@ -2,7 +2,6 @@ package com.fronobear.pvpessentials.refined.hud;
 
 import com.fronobear.pvpessentials.refined.config.ConfigManager;
 import com.fronobear.pvpessentials.refined.config.ModConfig;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
