@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "pvp-essentials-refined:block/fake_anchor"
+    }
+  }
+}

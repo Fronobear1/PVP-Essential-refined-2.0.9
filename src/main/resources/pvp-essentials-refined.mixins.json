@@ -5,7 +5,10 @@
 	"mixins": [
 	],
 	"client": [
-		"CrosshairMixin"
+		"CrosshairMixin",
+		"hurtcam.MixinGameRenderer",
+		"hurtcam.MixinInGameHud",
+		"crystaloptimizer.ClientConnectionMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

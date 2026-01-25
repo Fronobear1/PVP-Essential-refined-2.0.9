@@ -4,17 +4,10 @@ import com.fronobear.pvpessentials.refined.config.ConfigManager;
 import com.fronobear.pvpessentials.refined.config.ModConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.entity.player.PlayerInventory;
-
-import net.minecraft.client.render.RenderTickCounter;
-
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.entity.player.PlayerInventory;
-
 import net.minecraft.client.render.RenderTickCounter;
 
 public class CombatItemsHud {
@@ -39,32 +32,68 @@ public class CombatItemsHud {
         // Apply Opacity
         float alpha = 1.0f;
 
-        // Prepare matrices
-        var matrices = context.getMatrices();
-
-        // Use manual positioning ("numbers") with local scaling for each element
-        // This avoids global matrix scaling issues and satisfies "set that in numbers not scales"
-
         int yOffset = 0;
-        int spacing = (int)(24 * scale); // Scale the spacing manually
+        int spacing = (int)(24 * scale); 
 
-        if (config.hud.showEnderPearls) {
-            int count = countItem(client.player.getInventory(), Items.ENDER_PEARL);
-            renderScaledItem(context, client, new ItemStack(Items.ENDER_PEARL), count, x, y + yOffset, scale, alpha);
-            yOffset += spacing; 
+        // Render Slot 1
+        yOffset = renderSlot(context, client, config.hud.slot1, x, y, yOffset, spacing, scale, alpha);
+        // Render Slot 2
+        yOffset = renderSlot(context, client, config.hud.slot2, x, y, yOffset, spacing, scale, alpha);
+        // Render Slot 3
+        yOffset = renderSlot(context, client, config.hud.slot3, x, y, yOffset, spacing, scale, alpha);
+        // Render Slot 4
+        yOffset = renderSlot(context, client, config.hud.slot4, x, y, yOffset, spacing, scale, alpha);
+    }
+
+    private static int renderSlot(DrawContext context, MinecraftClient client, ModConfig.HUD.HudItem itemType, int x, int y, int yOffset, int spacing, float scale, float alpha) {
+        if (itemType == ModConfig.HUD.HudItem.NONE) return yOffset;
+
+        ItemStack displayStack = ItemStack.EMPTY;
+        int count = 0;
+
+        switch (itemType) {
+            case ENDER_PEARL:
+                displayStack = new ItemStack(Items.ENDER_PEARL);
+                count = countItem(client.player.getInventory(), Items.ENDER_PEARL);
+                break;
+            case GOLDEN_APPLE:
+                displayStack = new ItemStack(Items.GOLDEN_APPLE);
+                count = countItem(client.player.getInventory(), Items.GOLDEN_APPLE) + countItem(client.player.getInventory(), Items.ENCHANTED_GOLDEN_APPLE);
+                break;
+            case ARROW:
+                displayStack = new ItemStack(Items.ARROW);
+                count = countItem(client.player.getInventory(), Items.ARROW) + countItem(client.player.getInventory(), Items.SPECTRAL_ARROW) + countItem(client.player.getInventory(), Items.TIPPED_ARROW);
+                break;
+            case TOTEM:
+                displayStack = new ItemStack(Items.TOTEM_OF_UNDYING);
+                count = countItem(client.player.getInventory(), Items.TOTEM_OF_UNDYING);
+                break;
+            case CRYSTAL:
+                displayStack = new ItemStack(Items.END_CRYSTAL);
+                count = countItem(client.player.getInventory(), Items.END_CRYSTAL);
+                break;
+            case OBSIDIAN:
+                displayStack = new ItemStack(Items.OBSIDIAN);
+                count = countItem(client.player.getInventory(), Items.OBSIDIAN);
+                break;
+            case ANCHOR:
+                displayStack = new ItemStack(Items.RESPAWN_ANCHOR);
+                count = countItem(client.player.getInventory(), Items.RESPAWN_ANCHOR);
+                break;
+            case GLOWSTONE:
+                displayStack = new ItemStack(Items.GLOWSTONE);
+                count = countItem(client.player.getInventory(), Items.GLOWSTONE);
+                break;
+            case EXP_BOTTLE:
+                displayStack = new ItemStack(Items.EXPERIENCE_BOTTLE);
+                count = countItem(client.player.getInventory(), Items.EXPERIENCE_BOTTLE);
+                break;
+            default:
+                return yOffset;
         }
 
-        if (config.hud.showArrows) {
-            int count = countItem(client.player.getInventory(), Items.ARROW) + countItem(client.player.getInventory(), Items.SPECTRAL_ARROW) + countItem(client.player.getInventory(), Items.TIPPED_ARROW);
-            renderScaledItem(context, client, new ItemStack(Items.ARROW), count, x, y + yOffset, scale, alpha);
-            yOffset += spacing;
-        }
-
-        if (config.hud.showGoldenApples) {
-            int count = countItem(client.player.getInventory(), Items.GOLDEN_APPLE) + countItem(client.player.getInventory(), Items.ENCHANTED_GOLDEN_APPLE);
-            renderScaledItem(context, client, new ItemStack(Items.GOLDEN_APPLE), count, x, y + yOffset, scale, alpha);
-            yOffset += spacing;
-        }
+        renderScaledItem(context, client, displayStack, count, x, y + yOffset, scale, alpha);
+        return yOffset + spacing;
     }
 
     private static void renderScaledItem(DrawContext context, MinecraftClient client, ItemStack displayStack, int count, int x, int y, float scale, float alpha) {
@@ -77,7 +106,6 @@ public class CombatItemsHud {
         matrices.scale(scale, scale);
         
         // Draw at (0,0) relative to the pushed matrix
-        // Note: Item opacity is currently not supported due to API limitations
         context.drawItem(displayStack, 0, 0);
         
         // Draw count
@@ -90,8 +118,9 @@ public class CombatItemsHud {
         matrices.popMatrix();
     }
 
-    private static int countItem(PlayerInventory inventory, net.minecraft.item.Item item) {
+    private static int countItem(PlayerInventory inventory, Item item) {
         int count = 0;
+        // Count main inventory
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stack = inventory.getStack(i);
             if (stack.getItem() == item) {

@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "pvp-essentials-refined",
-	"version": "${version}",
+	"version": "2.0.9",
 	"name": "PvP Essentials: Refined",
 	"description": "PvP Essentials is a Minecraft mod for enhancing PvP. It provides a user-friendly HUD that shows essential information, such as armor durability, golden apple count, ender pearl availability, and arrow count.",
 	"authors": [
@@ -32,13 +32,9 @@
 		"pvp-essentials-refined.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.15.11",
+		"fabricloader": ">=0.17.3",
 		"minecraft": "1.21.11",
 		"java": ">=21",
-		"fabric-api": "*",
-		"ukulib": "*",
-		"ukus-armor-hud": "*",
-		"betterhurtcam": "*",
-		"totemcounter": "*"
+		"fabric-api": "*"
 	}
 }
