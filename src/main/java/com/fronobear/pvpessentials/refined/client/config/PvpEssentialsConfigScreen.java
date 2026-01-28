@@ -13,6 +13,9 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
+import com.fronobear.pvpessentials.refined.client.gui.screen.KeystrokePositionScreen;
+import com.fronobear.pvpessentials.refined.client.gui.screen.CpsPositionScreen;
+
 import com.fronobear.pvpessentials.refined.config.ConfigManager;
 import com.fronobear.pvpessentials.refined.config.ModConfig;
 
@@ -231,8 +234,13 @@ public class PvpEssentialsConfigScreen {
                 .build());
 
         armorHud.addEntry(eb.startEnumSelector(Text.literal("Style"), ModConfig.ArmorHud.Style.class, config.armorHud.style)
-                .setDefaultValue(ModConfig.ArmorHud.Style.STYLE_1_E)
+                .setDefaultValue(ModConfig.ArmorHud.Style.MODERN)
                 .setSaveConsumer(v -> config.armorHud.style = v)
+                .build());
+
+        armorHud.addEntry(eb.startEnumSelector(Text.literal("Durability Display"), ModConfig.ArmorHud.DurabilityDisplay.class, config.armorHud.durabilityDisplay)
+                .setDefaultValue(ModConfig.ArmorHud.DurabilityDisplay.NUMERIC)
+                .setSaveConsumer(v -> config.armorHud.durabilityDisplay = v)
                 .build());
 
         armorHud.addEntry(eb.startEnumSelector(Text.literal("Widget Shown Condition"), ModConfig.ArmorHud.WidgetShown.class, config.armorHud.widgetShown)
@@ -273,6 +281,187 @@ public class PvpEssentialsConfigScreen {
         armorHud.addEntry(eb.startFloatField(Text.literal("Warning Bobbing Interval (ms)"), config.armorHud.warningIconBobbingIntervalMs)
                 .setDefaultValue(2000.0F)
                 .setSaveConsumer(v -> config.armorHud.warningIconBobbingIntervalMs = v)
+                .build());
+
+        /* =========================
+           KEYSTROKES (TipTapShow)
+        ========================= */
+        ConfigCategory keystrokes = builder.getOrCreateCategory(Text.literal("Keystrokes").formatted(Formatting.LIGHT_PURPLE, Formatting.BOLD));
+
+        keystrokes.addEntry(eb.startBooleanToggle(Text.literal("Enable Keystrokes"), config.keystrokes.enabled)
+                .setDefaultValue(true)
+                .setSaveConsumer(v -> config.keystrokes.enabled = v)
+                .build());
+
+        keystrokes.addEntry(eb.startBooleanToggle(Text.literal("Hide on Small Screen"), config.keystrokes.hideOnSmallScreen)
+                .setDefaultValue(true)
+                .setTooltip(Text.literal("Automatically hide keystrokes when the game window is small"))
+                .setSaveConsumer(v -> config.keystrokes.hideOnSmallScreen = v)
+                .build());
+
+        keystrokes.addEntry(eb.startIntField(Text.literal("Small Screen Width Threshold"), config.keystrokes.smallScreenWidth)
+                .setDefaultValue(400)
+                .setTooltip(Text.literal("The window width (in scaled pixels) below which the keystrokes will be hidden.\nCurrent Scaled Width: " + MinecraftClient.getInstance().getWindow().getScaledWidth()))
+                .setSaveConsumer(v -> config.keystrokes.smallScreenWidth = v)
+                .build());
+
+        keystrokes.addEntry(new ButtonConfigEntry(
+            Text.literal("Adjust Position"),
+            Text.literal("Open Editor"),
+            button -> MinecraftClient.getInstance().setScreen(new KeystrokePositionScreen(MinecraftClient.getInstance().currentScreen))
+        ));
+
+
+        keystrokes.addEntry(eb.startAlphaColorField(Text.literal("Background Color"), config.keystrokes.backgroundColor)
+                .setDefaultValue(0x373d47bf)
+                .setSaveConsumer(v -> config.keystrokes.backgroundColor = v)
+                .build());
+
+        keystrokes.addEntry(eb.startAlphaColorField(Text.literal("Pressed Background Color"), config.keystrokes.pressedBackgroundColor)
+                .setDefaultValue(0x373d4747)
+                .setSaveConsumer(v -> config.keystrokes.pressedBackgroundColor = v)
+                .build());
+
+        keystrokes.addEntry(eb.startAlphaColorField(Text.literal("Key Color"), config.keystrokes.keyColor)
+                .setDefaultValue(0xffffffff)
+                .setSaveConsumer(v -> config.keystrokes.keyColor = v)
+                .build());
+
+        keystrokes.addEntry(eb.startAlphaColorField(Text.literal("Pressed Key Color"), config.keystrokes.pressedKeyColor)
+                .setDefaultValue(0xff000000)
+                .setSaveConsumer(v -> config.keystrokes.pressedKeyColor = v)
+                .build());
+
+        keystrokes.addEntry(eb.startBooleanToggle(Text.literal("Rainbow Mode"), config.keystrokes.rainbowMode)
+                .setDefaultValue(false)
+                .setSaveConsumer(v -> config.keystrokes.rainbowMode = v)
+                .build());
+
+        keystrokes.addEntry(eb.startIntField(Text.literal("Rainbow Offset"), config.keystrokes.rainbowOffset)
+                .setDefaultValue(9)
+                .setSaveConsumer(v -> config.keystrokes.rainbowOffset = v)
+                .build());
+
+        keystrokes.addEntry(eb.startIntField(Text.literal("Rainbow Speed"), config.keystrokes.rainbowSpeed)
+                .setDefaultValue(4)
+                .setSaveConsumer(v -> config.keystrokes.rainbowSpeed = v)
+                .build());
+
+        keystrokes.addEntry(eb.startBooleanToggle(Text.literal("Show Movement Keys"), config.keystrokes.showMovement)
+                .setDefaultValue(true)
+                .setSaveConsumer(v -> config.keystrokes.showMovement = v)
+                .build());
+
+        keystrokes.addEntry(eb.startBooleanToggle(Text.literal("Show Jump Key"), config.keystrokes.showJump)
+                .setDefaultValue(true)
+                .setSaveConsumer(v -> config.keystrokes.showJump = v)
+                .build());
+
+        keystrokes.addEntry(eb.startBooleanToggle(Text.literal("Show Click Keys"), config.keystrokes.showClick)
+                .setDefaultValue(true)
+                .setSaveConsumer(v -> config.keystrokes.showClick = v)
+                .build());
+
+        keystrokes.addEntry(eb.startEnumSelector(Text.literal("CPS Display Mode"), ModConfig.Keystrokes.CpsType.class, config.keystrokes.cpsType)
+                .setDefaultValue(ModConfig.Keystrokes.CpsType.ALWAYS)
+                .setSaveConsumer(v -> config.keystrokes.cpsType = v)
+                .build());
+
+        keystrokes.addEntry(eb.startDoubleField(Text.literal("Display Scale Factor"), config.keystrokes.displayFactor)
+                .setDefaultValue(1.0)
+                .setSaveConsumer(v -> config.keystrokes.displayFactor = v)
+                .build());
+
+        keystrokes.addEntry(eb.startIntField(Text.literal("Horizontal Position"), config.keystrokes.horizontalSlider)
+                .setDefaultValue(20)
+                .setSaveConsumer(v -> config.keystrokes.horizontalSlider = v)
+                .build());
+
+        keystrokes.addEntry(eb.startIntField(Text.literal("Vertical Position"), config.keystrokes.verticalSlider)
+                .setDefaultValue(20)
+                .setSaveConsumer(v -> config.keystrokes.verticalSlider = v)
+                .build());
+        
+        keystrokes.addEntry(eb.startBooleanToggle(Text.literal("Key Shadow"), config.keystrokes.keyShadow)
+                .setDefaultValue(false)
+                .setSaveConsumer(v -> config.keystrokes.keyShadow = v)
+                .build());
+
+        /* =========================
+           CPS COUNTER
+        ========================= */
+        ConfigCategory cps = builder.getOrCreateCategory(Text.literal("CPS Counter"));
+
+        cps.addEntry(eb.startBooleanToggle(Text.literal("Enable CPS Counter"), config.cps.enabled)
+                .setDefaultValue(true)
+                .setSaveConsumer(v -> config.cps.enabled = v)
+                .build());
+
+        cps.addEntry(eb.startTextDescription(Text.literal("Positioning")).build());
+        
+        cps.addEntry(new ButtonConfigEntry(
+            Text.literal("Adjust Position"),
+            Text.literal("Open Editor"),
+            button -> MinecraftClient.getInstance().setScreen(new CpsPositionScreen(MinecraftClient.getInstance().currentScreen))
+        ));
+
+        cps.addEntry(eb.startAlphaColorField(Text.literal("Text Color"), config.cps.textColor)
+            .setDefaultValue(0xFFFFFFFF)
+            .setSaveConsumer(v -> config.cps.textColor = v)
+            .build());
+
+        cps.addEntry(eb.startAlphaColorField(Text.literal("Background Color"), config.cps.backgroundColor)
+            .setDefaultValue(0x80000000)
+            .setSaveConsumer(v -> config.cps.backgroundColor = v)
+            .build());
+
+        /* =========================
+           BETTER PING DISPLAY
+        ========================= */
+        ConfigCategory pingDisplay = builder.getOrCreateCategory(Text.literal("Ping Display").formatted(Formatting.GREEN, Formatting.BOLD));
+
+        pingDisplay.addEntry(eb.startBooleanToggle(Text.literal("Auto Color Ping Text"), config.betterPingDisplay.autoColorPingText)
+                .setDefaultValue(true)
+                .setTooltip(Text.literal("Automatically color ping text based on latency"))
+                .setSaveConsumer(v -> config.betterPingDisplay.autoColorPingText = v)
+                .build());
+
+        pingDisplay.addEntry(eb.startBooleanToggle(Text.literal("Render Ping Bars"), config.betterPingDisplay.renderPingBars)
+                .setDefaultValue(false)
+                .setTooltip(Text.literal("Show the vanilla ping bars alongside the text"))
+                .setSaveConsumer(v -> config.betterPingDisplay.renderPingBars = v)
+                .build());
+
+        pingDisplay.addEntry(eb.startColorField(Text.literal("Ping Text Color"), config.betterPingDisplay.pingTextColor & 0xFFFFFF)
+                .setDefaultValue(0xA0A0A0)
+                .setTooltip(Text.literal("Color of the ping text (if auto color is disabled)"))
+                .setSaveConsumer(v -> config.betterPingDisplay.pingTextColor = v)
+                .build());
+
+        pingDisplay.addEntry(eb.startStrField(Text.literal("Ping Text Format"), config.betterPingDisplay.pingTextFormatString)
+                .setDefaultValue("%dms")
+                .setTooltip(Text.literal("Format string for the ping text"))
+                .setSaveConsumer(v -> config.betterPingDisplay.pingTextFormatString = v)
+                .build());
+
+        /* =========================
+           STATUS EFFECTS
+        ========================= */
+        ConfigCategory statusEffects = builder.getOrCreateCategory(Text.literal("Status Effects").formatted(Formatting.GOLD, Formatting.BOLD));
+
+        statusEffects.addEntry(eb.startBooleanToggle(Text.literal("Enable Status Effects HUD"), config.statusEffects.enabled)
+                .setDefaultValue(true)
+                .setSaveConsumer(v -> config.statusEffects.enabled = v)
+                .build());
+
+        statusEffects.addEntry(eb.startIntField(Text.literal("X Offset (from right)"), config.statusEffects.xOffset)
+                .setDefaultValue(5)
+                .setSaveConsumer(v -> config.statusEffects.xOffset = v)
+                .build());
+
+        statusEffects.addEntry(eb.startIntField(Text.literal("Y Offset (from top)"), config.statusEffects.yOffset)
+                .setDefaultValue(5)
+                .setSaveConsumer(v -> config.statusEffects.yOffset = v)
                 .build());
 
         /* =========================

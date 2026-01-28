@@ -1,40 +1,58 @@
 {
-	"schemaVersion": 1,
-	"id": "pvp-essentials-refined",
-	"version": "2.0.9",
-	"name": "PvP Essentials: Refined",
-	"description": "PvP Essentials is a Minecraft mod for enhancing PvP. It provides a user-friendly HUD that shows essential information, such as armor durability, golden apple count, ender pearl availability, and arrow count.",
-	"authors": [
-		"FronoBear"
-	],
-	"contact": {
-		"homepage": "https://github.com/fronobear/pvpessentials-refined",
-		"sources": "https://github.com/fronobear/pvpessentials-refined"
-	},
-	"license": "MIT",
-	"icon": "assets/pvp-essentials-refined/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"com.fronobear.pvpessentials.refined.PvPEssentialsRefined"
-		],
-		"preLaunch": [
-			"com.fronobear.pvpessentials.refined.PvPEssentialsPreLaunch"
-		],
-		"client": [
-			"com.fronobear.pvpessentials.refined.client.PvPEssentialsRefinedClient"
-		],
-		"modmenu": [
-			"com.fronobear.pvpessentials.refined.compat.ModMenuIntegration"
-		]
-	},
-	"mixins": [
-		"pvp-essentials-refined.mixins.json"
-	],
-	"depends": {
-		"fabricloader": ">=0.17.3",
-		"minecraft": "1.21.11",
-		"java": ">=21",
-		"fabric-api": "*"
-	}
+  "schemaVersion": 1,
+  "id": "pvp-essentials-refined",
+  "version": "2.1.0",
+  "name": "PvP Essentials: Refined",
+  "description": "PvP Essentials is a Minecraft mod designed to enhance the PvP experience. It features a clean, user-friendly HUD that displays critical combat information, including armor durability (with numeric values), golden apple count, ender pearl availability, arrow count, CPS, keystrokes, ping, and active status effect timers—so you always stay one step ahead in battle.",
+
+  "authors": [
+    "FronoBear"
+  ],
+
+  "contributors": [
+    "PhantomZ3",
+    "uku",
+    "Walksy",
+    "wafflebitez",
+    "Marlow",
+    "Bram",
+    "HerobaneNair",
+    "Spyxar Pix",
+    "Vlad Marica"
+  ],
+
+  "contact": {
+    "homepage": "https://github.com/fronobear/pvpessentials-refined",
+    "sources": "https://github.com/fronobear/pvpessentials-refined"
+  },
+
+  "license": "MIT",
+  "icon": "assets/pvp-essentials-refined/icon.png",
+  "environment": "*",
+
+  "entrypoints": {
+    "main": [
+      "com.fronobear.pvpessentials.refined.PvPEssentialsRefined"
+    ],
+    "preLaunch": [
+      "com.fronobear.pvpessentials.refined.PvPEssentialsPreLaunch"
+    ],
+    "client": [
+      "com.fronobear.pvpessentials.refined.client.PvPEssentialsRefinedClient"
+    ],
+    "modmenu": [
+      "com.fronobear.pvpessentials.refined.compat.ModMenuIntegration"
+    ]
+  },
+
+  "mixins": [
+    "pvp-essentials-refined.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.17.3",
+    "minecraft": "1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
 }

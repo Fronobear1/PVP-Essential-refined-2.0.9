@@ -10,6 +10,10 @@ public class ConfigManager {
     }
 
     public static void save() {
-        AutoConfig.getConfigHolder(ModConfig.class).save();
+        try {
+            AutoConfig.getConfigHolder(ModConfig.class).save();
+        } catch (Throwable e) {
+            com.fronobear.pvpessentials.refined.PvPEssentialsRefined.LOGGER.error("Failed to save config", e);
+        }
     }
 }

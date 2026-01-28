@@ -6,9 +6,12 @@
 	],
 	"client": [
 		"CrosshairMixin",
+		"TipTapMouseMixin",
 		"hurtcam.MixinGameRenderer",
 		"hurtcam.MixinInGameHud",
-		"crystaloptimizer.ClientConnectionMixin"
+		"crystaloptimizer.ClientConnectionMixin",
+		"ping.PlayerListHudMixin",
+		"ping.PlayerListHudInvoker"
 	],
 	"injectors": {
 		"defaultRequire": 1

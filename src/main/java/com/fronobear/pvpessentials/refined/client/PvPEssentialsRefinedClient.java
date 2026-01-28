@@ -13,6 +13,9 @@ import com.fronobear.pvpessentials.refined.crystaloptimizer.packet.OptOutPacket;
 import com.fronobear.pvpessentials.refined.crystaloptimizer.packet.VersionPacket;
 import com.fronobear.pvpessentials.refined.hud.ArmorHudRenderer;
 import com.fronobear.pvpessentials.refined.hud.CombatItemsHud;
+import com.fronobear.pvpessentials.refined.hud.CpsDisplayRenderer;
+import com.fronobear.pvpessentials.refined.hud.StatusEffectRenderer;
+import com.fronobear.pvpessentials.refined.tiptap.KeystrokeOverlay;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -28,7 +31,11 @@ public class PvPEssentialsRefinedClient implements ClientModInitializer {
             if (!ConfigManager.getConfig().general.modEnabled) return;
             CombatItemsHud.render(drawContext, tickCounter);
             ArmorHudRenderer.render(drawContext, tickCounter);
+            CpsDisplayRenderer.render(drawContext, tickCounter);
+            StatusEffectRenderer.render(drawContext, tickCounter);
         });
+
+        HudRenderCallback.EVENT.register(new KeystrokeOverlay()::onHudRender);
         
         if (ConfigManager.getConfig().coordinates.enabled) {
             HudRenderCallback.EVENT.register(new CoordinateOverlay());

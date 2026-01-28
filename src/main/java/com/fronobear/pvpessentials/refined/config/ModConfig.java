@@ -49,6 +49,22 @@ public class ModConfig implements ConfigData {
     @ConfigEntry.Gui.TransitiveObject
     public FPS fps = new FPS();
 
+    @ConfigEntry.Category("keystrokes")
+    @ConfigEntry.Gui.TransitiveObject
+    public Keystrokes keystrokes = new Keystrokes();
+
+    @ConfigEntry.Category("cps")
+    @ConfigEntry.Gui.TransitiveObject
+    public Cps cps = new Cps();
+
+    @ConfigEntry.Category("better_ping_display")
+    @ConfigEntry.Gui.TransitiveObject
+    public BetterPingDisplay betterPingDisplay = new BetterPingDisplay();
+
+    @ConfigEntry.Category("status_effects")
+    @ConfigEntry.Gui.TransitiveObject
+    public StatusEffects statusEffects = new StatusEffects();
+
     // ==================== INNER CLASSES ====================
 
     public static class FPS {
@@ -87,7 +103,7 @@ public class ModConfig implements ConfigData {
 
         @Comment("Style")
         @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
-        public Style style = Style.STYLE_1_E;
+        public Style style = Style.MODERN;
 
         @Comment("Widget Shown Condition")
         @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
@@ -119,12 +135,17 @@ public class ModConfig implements ConfigData {
         @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
         public Orientation orientation = Orientation.HORIZONTAL;
 
+        @Comment("Durability Display")
+        @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+        public DurabilityDisplay durabilityDisplay = DurabilityDisplay.NUMERIC;
+
         public enum Anchor { TOP_CENTER, TOP, BOTTOM, HOTBAR }
         public enum Side { RIGHT, LEFT }
         public enum OffhandSlotBehavior { ALWAYS_IGNORE, ADHERE, ALWAYS_LEAVE_SPACE }
         public enum WidgetShown { ALWAYS, IF_ANY_PRESENT, NOT_EMPTY }
-        public enum Style { STYLE_1_E, STYLE_1_H, STYLE_1_S, STYLE_2_E, STYLE_2_H, STYLE_2_S, STYLE_3 }
+        public enum Style { HOTBAR, MODERN }
         public enum Orientation { HORIZONTAL, VERTICAL }
+        public enum DurabilityDisplay { BAR, NUMERIC, PERCENTAGE, BAR_AND_VALUES, BAR_AND_PERCENTAGE }
     }
 
     public static class General {
@@ -226,5 +247,121 @@ public class ModConfig implements ConfigData {
         @Comment("Enable debug logs")
         @ConfigEntry.Gui.Tooltip
         public boolean debugMode = false;
+    }
+
+    public static class Keystrokes {
+        @Comment("Enable Keystrokes HUD")
+        public boolean enabled = true;
+        
+        @Comment("Background Color (Hex)")
+        @ConfigEntry.ColorPicker(allowAlpha = true)
+        public int backgroundColor = 0x373d47bf;
+        
+        @Comment("Pressed Background Color (Hex)")
+        @ConfigEntry.ColorPicker(allowAlpha = true)
+        public int pressedBackgroundColor = 0x373d4747;
+        
+        @Comment("Key Color (Hex)")
+        @ConfigEntry.ColorPicker(allowAlpha = true)
+        public int keyColor = 0xffffffff;
+        
+        @Comment("Pressed Key Color (Hex)")
+        @ConfigEntry.ColorPicker(allowAlpha = true)
+        public int pressedKeyColor = 0xff000000;
+        
+        @Comment("Rainbow Mode")
+        public boolean rainbowMode = false;
+        
+        @Comment("Rainbow Offset")
+        public int rainbowOffset = 9;
+        
+        @Comment("Rainbow Speed")
+        public int rainbowSpeed = 4;
+        
+        @Comment("Show Movement Keys (WASD)")
+        public boolean showMovement = true;
+        
+        @Comment("Show Jump Key (Space)")
+        public boolean showJump = true;
+        
+        @Comment("Show Click Keys (LMB/RMB)")
+        public boolean showClick = true;
+        
+        @Comment("CPS Display Mode")
+        @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+        public CpsType cpsType = CpsType.ALWAYS;
+        
+        @Comment("Display Scale Factor")
+        public double displayFactor = 1.0;
+
+        @Comment("Align to Right")
+        public boolean alignRight = true;
+        
+        @Comment("Horizontal Position (Slider)")
+        public int horizontalSlider = 10;
+        
+        @Comment("Vertical Position (Slider)")
+        public int verticalSlider = 10;
+        
+        @Comment("Key Shadow")
+        public boolean keyShadow = false;
+
+        @Comment("Hide on Small Screen")
+        public boolean hideOnSmallScreen = true;
+
+        @Comment("Small Screen Width Threshold")
+        public int smallScreenWidth = 400;
+
+        public enum CpsType {
+            ALWAYS, ON_CLICK, NEVER
+        }
+    }
+
+    public static class Cps {
+        @Comment("Enable CPS Counter")
+        public boolean enabled = true;
+
+        @Comment("X Position")
+        public int x = 0;
+
+        @Comment("Y Position")
+        public int y = 0;
+        
+        @Comment("Align Right")
+        public boolean alignRight = true;
+
+        @Comment("Text Color (Hex)")
+        @ConfigEntry.ColorPicker(allowAlpha = true)
+        public int textColor = 0xFFFFFFFF;
+
+        @Comment("Background Color (Hex)")
+        @ConfigEntry.ColorPicker(allowAlpha = true)
+        public int backgroundColor = 0x80000000;
+    }
+
+    public static class BetterPingDisplay {
+        @Comment("Auto Color Ping Text")
+        public boolean autoColorPingText = true;
+
+        @Comment("Render Ping Bars")
+        public boolean renderPingBars = false;
+
+        @Comment("Ping Text Color (Hex)")
+        @ConfigEntry.ColorPicker(allowAlpha = false)
+        public int pingTextColor = 0xA0A0A0;
+
+        @Comment("Ping Text Format")
+        public String pingTextFormatString = "%dms";
+    }
+
+    public static class StatusEffects {
+        @Comment("Enable Status Effect HUD")
+        public boolean enabled = true;
+
+        @Comment("X Offset (from right)")
+        public int xOffset = 5;
+
+        @Comment("Y Offset (from top)")
+        public int yOffset = 5;
     }
 }

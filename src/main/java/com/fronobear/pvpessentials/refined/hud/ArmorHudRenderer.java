@@ -215,18 +215,30 @@ public class ArmorHudRenderer {
 
             // Draw relative to 0,0 since we translated
             switch (config.armorHud.style) {
-                case STYLE_1_E: drawSlots1(context, 0, 0, widgetLength, 3); break;
-                case STYLE_1_H: drawSlots1(context, 0, 0, widgetLength, width / 2); break;
-                case STYLE_1_S: drawSlots1(context, 0, 0, widgetLength, (width + step) / 2); break;
-                case STYLE_2_E: drawSlots2(context, 0, 0, widgetLength, 3); break;
-                case STYLE_2_H: drawSlots2(context, 0, 0, widgetLength, width / 2); break;
-                case STYLE_2_S: drawSlots2(context, 0, 0, widgetLength, (width + step) / 2); break;
-                case STYLE_3:
-                    context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGETS_TEXTURE, 0, 0, 0, 24, 23, (width - step) / 2, height, 256, 256);
+                case HOTBAR:
+                    // Left cap
+                    context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGETS_TEXTURE, 0, 0, 0, 0, 1, 22, 256, 256);
+                    // Slots
                     for (int i = 0; i < slots; i++) {
-                        context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGETS_TEXTURE, (width - step) / 2 + i * step, 0, 0, 24 + (width - step) / 2, 23, step, height, 256, 256);
+                        context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGETS_TEXTURE, 1 + i * 20, 0, 1, 0, 20, 22, 256, 256);
                     }
-                    context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGETS_TEXTURE, widgetLength - (width - step) / 2, 0, 0, 24, 23, (width - step) / 2, height, 256, 256);
+                    // Right cap
+                    context.drawTexture(RenderPipelines.GUI_TEXTURED, WIDGETS_TEXTURE, widgetLength - 1, 0, 181, 0, 1, 22, 256, 256);
+                    break;
+                case MODERN:
+                    // Modern style: Semi-transparent black background with a subtle border
+                    int modernColor = 0x80000000; // Semi-transparent black
+                    int borderColor = 0x40FFFFFF; // Subtle white border
+                    
+                    context.fill(0, 0, widgetLength, height, modernColor);
+                    // Top border
+                    context.fill(0, 0, widgetLength, 1, borderColor);
+                    // Bottom border
+                    context.fill(0, height - 1, widgetLength, height, borderColor);
+                    // Left border
+                    context.fill(0, 0, 1, height, borderColor);
+                    // Right border
+                    context.fill(widgetLength - 1, 0, widgetLength, height, borderColor);
                     break;
             }
             matrices.popMatrix(); // End background drawing
@@ -255,11 +267,73 @@ public class ArmorHudRenderer {
                     // Draw Item
                     context.drawItem(stack, x, y);
                     
-                    // Draw Durability Bar (Standard)
-                    context.drawStackOverlay(client.textRenderer, stack, x, y);
+                    // Draw Durability Bar (Standard) - Only if enabled
+                    if (config.armorHud.durabilityDisplay == ModConfig.ArmorHud.DurabilityDisplay.BAR ||
+                        config.armorHud.durabilityDisplay == ModConfig.ArmorHud.DurabilityDisplay.BAR_AND_VALUES ||
+                        config.armorHud.durabilityDisplay == ModConfig.ArmorHud.DurabilityDisplay.BAR_AND_PERCENTAGE) {
+                        context.drawStackOverlay(client.textRenderer, stack, x, y);
+                    }
+                    
+                    // Draw Custom Durability Text (Value/Percentage)
+                    if (config.armorHud.durabilityDisplay != ModConfig.ArmorHud.DurabilityDisplay.BAR && stack.isDamageable()) {
+                        String text = "";
+                        int damage = stack.getDamage();
+                        int maxDamage = stack.getMaxDamage();
+                        int current = maxDamage - damage;
+                        
+                        if (config.armorHud.durabilityDisplay == ModConfig.ArmorHud.DurabilityDisplay.NUMERIC ||
+                            config.armorHud.durabilityDisplay == ModConfig.ArmorHud.DurabilityDisplay.BAR_AND_VALUES) {
+                            text = String.valueOf(current);
+                        } else if (config.armorHud.durabilityDisplay == ModConfig.ArmorHud.DurabilityDisplay.PERCENTAGE ||
+                                   config.armorHud.durabilityDisplay == ModConfig.ArmorHud.DurabilityDisplay.BAR_AND_PERCENTAGE) {
+                            int percent = (int) Math.round(((double) current / maxDamage) * 100);
+                            text = percent + "%";
+                        }
+                        
+                        if (!text.isEmpty()) {
+                            matrices.pushMatrix();
+                            float scale = 0.75f; // Slightly larger text for readability
+                            matrices.scale(scale, scale); // 2D scale
+                            matrices.translate(0.0f, 0.0f); // 2D translate
+                            
+                            int textWidth = client.textRenderer.getWidth(text);
+                            int textHeight = client.textRenderer.fontHeight;
+                            
+                            // Color Logic
+                            // Green (Full/High) -> Yellow (Half) -> Red (Low/Critical)
+                            int color = 0xFF55FF55; // Green
+                            double damageRatio = (double) current / maxDamage;
+                            
+                            if (current <= config.armorHud.minDurabilityValue || damageRatio <= config.armorHud.minDurabilityPercentage) {
+                                color = 0xFFFF5555; // Red
+                            } else if (damageRatio <= 0.5) {
+                                color = 0xFFFFFF55; // Yellow
+                            }
+                            
+                            // Position Logic
+                            float drawX;
+                            float drawY;
+
+                            if (config.armorHud.orientation == ModConfig.ArmorHud.Orientation.VERTICAL) {
+                                // Right side of the slot, vertically centered
+                                // x + 19 is the right edge of the slot background
+                                drawX = (x + 21) / scale;
+                                drawY = (y + 8) / scale - textHeight / 2.0f;
+                            } else {
+                                // Horizontal: Bottom-Right corner inside the slot
+                                drawX = (x + 19) / scale - textWidth;
+                                drawY = (y + 19) / scale - textHeight;
+                            }
+                            
+                            // Draw text with shadow (last parameter true) which helps it pop against items
+                            // Note: We rely on draw order for Z-layering since Matrix3x2fStack is 2D
+                            context.drawText(client.textRenderer, text, (int)drawX, (int)drawY, color, true);
+                            matrices.popMatrix();
+                        }   
+                    }
                     
                     // Draw Warning
-                    if (config.armorHud.warningShown && stack.isDamageable()) {
+                    if (config.armorHud.warningShown && stack.isDamageable() && stack.getDamage() > 0) {
                         int damage = stack.getDamage();
                         int maxDamage = stack.getMaxDamage();
                         if ((1.0F - ((float) damage) / ((float) maxDamage) <= config.armorHud.minDurabilityPercentage) || (maxDamage - damage <= config.armorHud.minDurabilityValue)) {
@@ -289,10 +363,7 @@ public class ArmorHudRenderer {
                              }
  
                              
-                             // RenderSystem.disableDepthTest();
-                             matrices.translate(0.0f, 0.0f);
                              context.drawText(client.textRenderer, "!", warnX, warnY, 0xFFFF0000, true);
-                             // RenderSystem.enableDepthTest();
                              matrices.popMatrix();
                         }
                     }
